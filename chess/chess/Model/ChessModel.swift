@@ -14,10 +14,10 @@ class ChessModel {
     static var board = [
         [K.Board.r, K.Board.n, K.Board.b, K.Board.q, K.Board.k, K.Board.b, K.Board.n, K.Board.r],
         [K.Board.p, K.Board.p, K.Board.p, K.Board.p, K.Board.p, K.Board.p, K.Board.p, K.Board.p],
-        ["", "", "", "", "", "", "", ""],
-        ["", "", "", "", "", "", "", ""],
-        ["", "", "", "", "", "", "", ""],
-        ["", "", "", "", "", "", "", ""],
+        [" ", " ", " ", " ", " ", " ", " ", " "],
+        [" ", " ", " ", " ", " ", " ", " ", " "],
+        [" ", " ", " ", " ", " ", " ", " ", " "],
+        [" ", " ", " ", " ", " ", " ", " ", " "],
         [K.Board.P, K.Board.P, K.Board.P, K.Board.P, K.Board.P, K.Board.P, K.Board.P, K.Board.P],
         [K.Board.R, K.Board.N, K.Board.B, K.Board.Q, K.Board.K, K.Board.B, K.Board.N, K.Board.R]
     ]
@@ -33,15 +33,14 @@ class ChessModel {
         
         var fen = fenString
         
-        fen = fen.replacingOccurrences(of: "1", with: " ")
-        fen = fen.replacingOccurrences(of: "2", with: "  ")
-        fen = fen.replacingOccurrences(of: "3", with: "   ")
-        fen = fen.replacingOccurrences(of: "4", with: "    ")
-        fen = fen.replacingOccurrences(of: "5", with: "     ")
-        fen = fen.replacingOccurrences(of: "6", with: "      ")
-        fen = fen.replacingOccurrences(of: "7", with: "       ")
-        fen = fen.replacingOccurrences(of: "8", with: "        ")
-
+        for idx in (1...8).reversed() {
+            if idx == 1 {
+                fen = fen.replacingOccurrences(of: "\(idx)", with: " ")
+            }else{
+                fen = fen.replacingOccurrences(of: "\(idx)", with: " \(idx-1)")
+            }
+        }
+        
         let fenArray = fen.split(separator: "/")
         
         for (fenRow, row) in zip(fenArray, 0..<8) {
@@ -51,6 +50,31 @@ class ChessModel {
         }
         
         print(fenArray)
+        
+    }
+    
+    static func movePiece(from fromLocation: Int, to toLocation: Int){
+        
+        print("Moving piece")
+        
+        let (fromRow, fromCol) = getRowColumn(squareIdx: fromLocation)
+        let (toRow, toCol) = getRowColumn(squareIdx: toLocation)
+        
+        print("\(fromRow), \(fromCol) to \(toRow), \(toCol)")
+        
+        board[toRow][toCol] = board[fromRow][fromCol]
+        board[fromRow][fromCol] = " "
+        
+    }
+    
+    static func getRowColumn(squareIdx: Int) -> (Int, Int) {
+        
+        let noOfItemsInRow = 8
+        
+        let row: Int = squareIdx / noOfItemsInRow
+        let column: Int = squareIdx % noOfItemsInRow
+        
+        return (row, column)
         
     }
     

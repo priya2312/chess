@@ -44,6 +44,7 @@ struct K {
     struct Colors {
         static let lightSquare = UIColor(named: "LightSquare")
         static let darkSquare = UIColor(named: "DarkSquare")
+        static let selectedSquare = UIColor(named: "SelectedSquare")
     }
     
     struct Cells {

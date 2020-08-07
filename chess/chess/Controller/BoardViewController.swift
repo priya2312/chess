@@ -17,12 +17,17 @@ class BoardViewController: UIViewController {
     @IBOutlet weak var boardCollectionView: UICollectionView!
     
     var noOfItemsInRow = 8
-    var currentChosenCell = -1
+//    var currentChosenCell = -1
+    
+    var fromLocation: Int?
+    var toLocation: Int?
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        
+        ChessModel.fenToBoard("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")
     }
     
 
@@ -48,8 +53,7 @@ extension BoardViewController: UICollectionViewDelegate, UICollectionViewDataSou
         
         let cell = boardCollectionView.dequeueReusableCell(withReuseIdentifier: K.Cells.boardCell, for: indexPath) as! BoardCell
         
-        let row = indexPath.item/noOfItemsInRow
-        let column = indexPath.item % noOfItemsInRow
+        let (row, column) = ChessModel.getRowColumn(squareIdx: indexPath.item)
         
         if (row + column) % 2 == 0 {
             cell.backgroundColor = K.Colors.lightSquare
@@ -80,12 +84,36 @@ extension BoardViewController: UICollectionViewDelegate, UICollectionViewDataSou
     @objc func itemPressed(_ cellPressed: UIButton){
         print(cellPressed.tag)
         
-        if (cellPressed.tag != currentChosenCell){
-            cellPressed.backgroundColor = .gray
-            currentChosenCell = cellPressed.tag
+//        if (cellPressed.tag != currentChosenCell){
+//            cellPressed.backgroundColor = K.Colors.selectedSquare
+//            currentChosenCell = cellPressed.tag
+//        }else{
+//            cellPressed.backgroundColor = .clear
+//            currentChosenCell = -1
+//        }
+        
+        if fromLocation == nil {
+            print("from: \(cellPressed.tag)")
+            let (row, col) = ChessModel.getRowColumn(squareIdx: cellPressed.tag)
+            print(ChessModel.board[row][col])
+            if (ChessModel.board[row][col] != " "){
+                fromLocation = cellPressed.tag
+            }else{
+                fromLocation = nil
+            }
         }else{
-            cellPressed.backgroundColor = .clear
-            currentChosenCell = -1
+            toLocation = cellPressed.tag
+        }
+        
+        // Executed when from and to location are not null
+        if let fromPos = fromLocation, let toPos = toLocation {
+            print("from: \(fromPos)")
+            print("to: \(toPos)")
+            ChessModel.movePiece(from: fromPos, to: toPos)
+            
+            boardCollectionView.reloadData()            
+            self.fromLocation = nil
+            self.toLocation = nil
         }
         
     }
